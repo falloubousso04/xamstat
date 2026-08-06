@@ -1,0 +1,7 @@
+**/node_modules
+**/dist
+**/__pycache__
+**/*.pyc
+.git
+_screenshot_*.png
+_test_*.mjs

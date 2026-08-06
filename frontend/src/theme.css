@@ -1,0 +1,274 @@
+:root {
+  --navy: #0b2545;
+  --navy-2: #13355e;
+  --gold: #c79a3d;
+  --gold-light: #e8c877;
+  --paper: #fbfaf7;
+  --ink: #1b2430;
+  --ink-soft: #4a5568;
+  --rule: #d9d2c0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Segoe UI", "Calibri", Arial, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-header {
+  background: linear-gradient(155deg, var(--navy) 0%, var(--navy-2) 60%, #0d2c52 100%);
+  color: #f4f2ea;
+  padding: 18px 28px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-shrink: 0;
+  border-bottom: 3px solid var(--gold);
+}
+
+.app-header h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: normal;
+  font-size: 24px;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.app-header .tagline {
+  font-size: 13px;
+  color: #cfd3e0;
+  font-style: italic;
+}
+
+.app-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(420px, 1fr);
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .app-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+}
+
+.chat-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--rule);
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bubble-row {
+  display: flex;
+  gap: 10px;
+  max-width: 88%;
+}
+
+.bubble-row.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.bubble-row.user .avatar {
+  background: var(--ink-soft);
+}
+
+.bubble-row.assistant .avatar {
+  background: var(--navy);
+}
+
+.bubble {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.bubble-row.user .bubble {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.bubble .source {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.bubble .source a {
+  color: var(--navy-2);
+}
+
+.suggestions {
+  padding: 0 20px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  border: 1px solid var(--rule);
+  background: #fff;
+  color: var(--navy-2);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.chip:hover {
+  background: #f0ede2;
+}
+
+.composer {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--rule);
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.composer input {
+  flex: 1;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14.5px;
+  font-family: inherit;
+}
+
+.composer input:focus {
+  outline: 2px solid var(--gold);
+}
+
+.composer button {
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.viz-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #fff;
+}
+
+.viz-header {
+  padding: 16px 20px 10px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.viz-header .kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 10.5px;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.viz-header h2 {
+  font-family: Georgia, serif;
+  font-weight: normal;
+  font-size: 18px;
+  margin: 4px 0 0;
+  color: var(--navy);
+}
+
+.viz-body {
+  flex: 1;
+  min-height: 0;
+  padding: 12px 16px;
+}
+
+.viz-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+  text-align: center;
+  padding: 0 30px;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.map-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 8px;
+}
+
+.map-legend .swatch {
+  width: 40px;
+  height: 8px;
+  border-radius: 4px;
+}
