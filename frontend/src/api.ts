@@ -1,3 +1,5 @@
+export type Indicator = "poverty_rate" | "population" | "density";
+
 export interface ChartSeriesPoint {
   label: string;
   value: number;
@@ -7,7 +9,7 @@ export interface ChartSpec {
   type: "bar" | "map" | "none";
   unit: string;
   series: ChartSeriesPoint[];
-  indicator: "poverty_rate" | "population" | null;
+  indicator: Indicator | null;
 }
 
 export interface SourceInfo {
@@ -21,13 +23,14 @@ export interface AskResponse {
   chart: ChartSpec;
   source: SourceInfo | null;
   suggestions: string[];
+  indicator: Indicator | null;
 }
 
-export async function askQuestion(question: string): Promise<AskResponse> {
+export async function askQuestion(question: string, contextIndicator: Indicator | null): Promise<AskResponse> {
   const res = await fetch("/api/ask", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, context_indicator: contextIndicator }),
   });
   if (!res.ok) {
     throw new Error(`Erreur API (${res.status})`);

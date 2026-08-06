@@ -20,6 +20,9 @@ INDICATOR_KEYWORDS: dict[str, list[str]] = {
         "pauvres",
         "pauvre",
         "seuil de pauvrete",
+        # wolof
+        "miskinaay",
+        "miskin",
     ],
     "population": [
         "population",
@@ -30,27 +33,45 @@ INDICATOR_KEYWORDS: dict[str, list[str]] = {
         "peuplement",
         "peuplee",
         "peuple",
+        # wolof
+        "askan",
+        "way dekk",
+        "waa dekk",
+        "nit ni",
+        "naata nit",
+    ],
+    "density": [
+        "densite de population",
+        "densite",
+        "dense",
+        "habitants au km",
+        "habitants par km",
+        "peuplement au km",
     ],
 }
 
 INDICATOR_LABELS = {
     "poverty_rate": "taux de pauvreté",
     "population": "population",
+    "density": "densité de population",
 }
 
 INDICATOR_ARTICLES = {
     "poverty_rate": "le",
     "population": "la",
+    "density": "la",
 }
 
 INDICATOR_RANKING_PHRASES = {
     "poverty_rate": {"high": "le plus élevé", "low": "le plus bas"},
     "population": {"high": "la plus élevée", "low": "la plus basse"},
+    "density": {"high": "la plus élevée", "low": "la plus basse"},
 }
 
 INDICATOR_UNITS = {
     "poverty_rate": "%",
     "population": "habitants",
+    "density": "hab/km²",
 }
 
 RANKING_HIGH = [
@@ -63,6 +84,10 @@ RANKING_HIGH = [
     "les plus peuplees",
     "le plus de monde",
     "plus grande population",
+    "la plus dense",
+    "les plus denses",
+    # wolof
+    "gen a miskin",
 ]
 RANKING_LOW = [
     "la moins pauvre",
@@ -73,6 +98,8 @@ RANKING_LOW = [
     "la moins peuplee",
     "les moins peuplees",
     "moins peuplee",
+    "la moins dense",
+    "les moins denses",
 ]
 
 COMPARISON_MARKERS = ["compar", "par rapport", " vs ", " versus ", " contre ", " et "]
@@ -98,6 +125,7 @@ class Intent:
     regions: list[str] = field(default_factory=list)
     ranking: tuple[str, int] | None = None  # ("high" | "low", n)
     wants_comparison: bool = False
+    used_context: bool = False
 
 
 class RegionCatalog:
@@ -162,16 +190,25 @@ def _extract_ranking(norm_text: str) -> tuple[str, int] | None:
     return None
 
 
-def interpret(question: str, catalog: RegionCatalog) -> Intent:
+def interpret(question: str, catalog: RegionCatalog, context_indicator: str | None = None) -> Intent:
     norm_text = normalize(question)
     indicator = _extract_indicator(norm_text)
     regions = catalog.resolve_all(norm_text)
     ranking = _extract_ranking(norm_text)
     wants_comparison = bool(ranking) or len(regions) >= 2 or any(m in norm_text for m in COMPARISON_MARKERS)
+
+    # Question de suivi ("Et à Kolda ?") : pas d'indicateur cité mais une région, un
+    # classement ou une comparaison le sont — on reprend l'indicateur de l'échange précédent.
+    used_context = False
+    if indicator is None and context_indicator and (regions or ranking):
+        indicator = context_indicator
+        used_context = True
+
     return Intent(
         raw_question=question,
         indicator=indicator,
         regions=regions,
         ranking=ranking,
         wants_comparison=wants_comparison,
+        used_context=used_context,
     )

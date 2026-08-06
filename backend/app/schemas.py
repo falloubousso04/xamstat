@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 class AskRequest(BaseModel):
     question: str
+    context_indicator: Optional[Literal["poverty_rate", "population", "density"]] = None
 
 
 class ChartSeries(BaseModel):
@@ -30,3 +31,4 @@ class AskResponse(BaseModel):
     chart: ChartSpec
     source: Optional[SourceInfo] = None
     suggestions: list[str] = []
+    indicator: Optional[str] = None

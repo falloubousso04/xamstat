@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { toPng } from "html-to-image";
 import { askQuestion, fetchSuggestions } from "./api";
-import type { ChartSpec, SourceInfo } from "./api";
+import type { ChartSpec, Indicator, SourceInfo } from "./api";
 import { MessageBubble } from "./components/MessageBubble";
 import type { Message } from "./components/MessageBubble";
 import { SuggestedQuestions } from "./components/SuggestedQuestions";
@@ -10,7 +11,7 @@ import { MapPanel } from "./components/MapPanel";
 const WELCOME: Message = {
   role: "assistant",
   text:
-    "Bonjour, je suis XamStat. Posez-moi une question sur la population ou la pauvreté dans les régions du Sénégal — par exemple « Quelle est la région la plus pauvre ? »",
+    "Bonjour, je suis XamStat. Posez-moi une question sur la population, la pauvreté ou la densité dans les régions du Sénégal — par exemple « Quelle est la région la plus pauvre ? »",
 };
 
 export default function App() {
@@ -21,7 +22,10 @@ export default function App() {
   const [chart, setChart] = useState<ChartSpec | null>(null);
   const [source, setSource] = useState<SourceInfo | null>(null);
   const [lastQuestion, setLastQuestion] = useState<string>("");
+  const [lastIndicator, setLastIndicator] = useState<Indicator | null>(null);
+  const [exporting, setExporting] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const vizBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchSuggestions().then(setSuggestions).catch(() => setSuggestions([]));
@@ -38,11 +42,12 @@ export default function App() {
     setInput("");
     setLoading(true);
     try {
-      const res = await askQuestion(q);
+      const res = await askQuestion(q, lastIndicator);
       setMessages((prev) => [...prev, { role: "assistant", text: res.answer, source: res.source }]);
       setChart(res.chart.type === "none" ? null : res.chart);
       setSource(res.source);
       setLastQuestion(q);
+      if (res.indicator) setLastIndicator(res.indicator);
       if (res.suggestions.length) setSuggestions(res.suggestions);
     } catch {
       setMessages((prev) => [
@@ -51,6 +56,22 @@ export default function App() {
       ]);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function exportChart() {
+    if (!vizBodyRef.current || exporting) return;
+    setExporting(true);
+    try {
+      const dataUrl = await toPng(vizBodyRef.current, { backgroundColor: "#ffffff", pixelRatio: 2 });
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = "xamstat-visualisation.png";
+      a.click();
+    } catch {
+      // silencieux : l'export est une fonctionnalité de confort, pas critique
+    } finally {
+      setExporting(false);
     }
   }
 
@@ -89,17 +110,30 @@ export default function App() {
         </section>
         <section className="viz-pane">
           <div className="viz-header">
-            <div className="kicker">Visualisation</div>
-            <h2>{lastQuestion || "En attente d'une question"}</h2>
+            <div className="viz-header-row">
+              <div>
+                <div className="kicker">Visualisation</div>
+                <h2>{lastQuestion || "En attente d'une question"}</h2>
+              </div>
+              {chart && (
+                <button className="export-btn" onClick={exportChart} disabled={exporting} title="Télécharger en PNG">
+                  {exporting ? "…" : "⭳ PNG"}
+                </button>
+              )}
+            </div>
           </div>
-          <div className="viz-body">
+          <div className="viz-body" ref={vizBodyRef}>
             {!chart && (
               <div className="viz-empty">
                 Le graphique ou la carte généré à partir de votre question apparaîtra ici.
               </div>
             )}
-            {chart?.type === "bar" && <ChartPanel series={chart.series} unit={chart.unit} />}
-            {chart?.type === "map" && <MapPanel series={chart.series} unit={chart.unit} />}
+            {chart && (
+              <div className="viz-fade" key={lastQuestion}>
+                {chart.type === "bar" && <ChartPanel series={chart.series} unit={chart.unit} />}
+                {chart.type === "map" && <MapPanel series={chart.series} unit={chart.unit} />}
+              </div>
+            )}
           </div>
           {source && (
             <div className="source" style={{ padding: "0 20px 16px" }}>

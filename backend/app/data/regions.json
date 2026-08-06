@@ -11,26 +11,33 @@
       "table": "Tableau III-2 : Indicateurs de la pauvreté selon la région",
       "page": 34,
       "url": "https://www.ansd.sn/sites/default/files/2024-07/Rapport_Final_EHCVM_2021-2022_VF.pdf"
+    },
+    "density": {
+      "source": "ANSD, RGPH-5, 2023 — Rapport définitif, Thème I : État et structure de la population",
+      "table": "Tableau I-22 : Répartition par région de la densité de population",
+      "page": 46,
+      "url": "https://www.ansd.sn/sites/default/files/recensements/rapport/Chapitre-1_ETAT-STRUCTURE-POPULATION-Rapport-def-RGPH-5.pdf"
     }
   },
   "national": {
     "population": 18126390,
-    "poverty_rate": 37.5
+    "poverty_rate": 37.5,
+    "density": 92
   },
   "regions": [
-    { "name": "Dakar",        "aliases": ["dakar"],                          "population": 4004426, "demographic_weight": 22.1, "poverty_rate": 9.3 },
-    { "name": "Thiès",        "aliases": ["thies", "thiès"],                 "population": 2463677, "demographic_weight": 13.6, "poverty_rate": 29.9 },
-    { "name": "Diourbel",     "aliases": ["diourbel"],                       "population": 2080333, "demographic_weight": 11.5, "poverty_rate": 37.4 },
-    { "name": "Saint-Louis",  "aliases": ["saint louis", "saint-louis", "st louis", "st-louis"], "population": 1202441, "demographic_weight": 6.6, "poverty_rate": 37.3 },
-    { "name": "Kaolack",      "aliases": ["kaolack"],                        "population": 1336720, "demographic_weight": 7.4, "poverty_rate": 49.6 },
-    { "name": "Louga",        "aliases": ["louga"],                          "population": 1125908, "demographic_weight": 6.2, "poverty_rate": 47.0 },
-    { "name": "Tambacounda",  "aliases": ["tambacounda", "tamba"],           "population": 987152,  "demographic_weight": 5.4, "poverty_rate": 62.8 },
-    { "name": "Kolda",        "aliases": ["kolda"],                          "population": 914798,  "demographic_weight": 5.0, "poverty_rate": 62.5 },
-    { "name": "Fatick",       "aliases": ["fatick"],                         "population": 906918,  "demographic_weight": 5.0, "poverty_rate": 46.5 },
-    { "name": "Matam",        "aliases": ["matam"],                          "population": 831630,  "demographic_weight": 4.6, "poverty_rate": 44.7 },
-    { "name": "Kaffrine",     "aliases": ["kaffrine"],                       "population": 820405,  "demographic_weight": 4.5, "poverty_rate": 58.2 },
-    { "name": "Ziguinchor",   "aliases": ["ziguinchor"],                     "population": 617567,  "demographic_weight": 3.4, "poverty_rate": 48.3 },
-    { "name": "Sédhiou",      "aliases": ["sedhiou", "sédhiou"],             "population": 589266,  "demographic_weight": 3.3, "poverty_rate": 64.4 },
-    { "name": "Kédougou",     "aliases": ["kedougou", "kédougou"],           "population": 245147,  "demographic_weight": 1.4, "poverty_rate": 65.7 }
+    { "name": "Dakar",        "aliases": ["dakar"],                          "population": 4004426, "demographic_weight": 22.1, "poverty_rate": 9.3,  "density": 7485, "area_km2": 535 },
+    { "name": "Thiès",        "aliases": ["thies", "thiès"],                 "population": 2463677, "demographic_weight": 13.6, "poverty_rate": 29.9, "density": 374,  "area_km2": 6586 },
+    { "name": "Diourbel",     "aliases": ["diourbel"],                       "population": 2080333, "demographic_weight": 11.5, "poverty_rate": 37.4, "density": 428,  "area_km2": 4860 },
+    { "name": "Saint-Louis",  "aliases": ["saint louis", "saint-louis", "st louis", "st-louis"], "population": 1202441, "demographic_weight": 6.6, "poverty_rate": 37.3, "density": 63, "area_km2": 19010 },
+    { "name": "Kaolack",      "aliases": ["kaolack"],                        "population": 1336720, "demographic_weight": 7.4, "poverty_rate": 49.6, "density": 252,  "area_km2": 5310 },
+    { "name": "Louga",        "aliases": ["louga"],                          "population": 1125908, "demographic_weight": 6.2, "poverty_rate": 47.0, "density": 44,   "area_km2": 25619 },
+    { "name": "Tambacounda",  "aliases": ["tambacounda", "tamba"],           "population": 987152,  "demographic_weight": 5.4, "poverty_rate": 62.8, "density": 23,   "area_km2": 42613 },
+    { "name": "Kolda",        "aliases": ["kolda"],                          "population": 914798,  "demographic_weight": 5.0, "poverty_rate": 62.5, "density": 67,   "area_km2": 13752 },
+    { "name": "Fatick",       "aliases": ["fatick"],                         "population": 906918,  "demographic_weight": 5.0, "poverty_rate": 46.5, "density": 129,  "area_km2": 7010 },
+    { "name": "Matam",        "aliases": ["matam"],                          "population": 831630,  "demographic_weight": 4.6, "poverty_rate": 44.7, "density": 29,   "area_km2": 28830 },
+    { "name": "Kaffrine",     "aliases": ["kaffrine"],                       "population": 820405,  "demographic_weight": 4.5, "poverty_rate": 58.2, "density": 74,   "area_km2": 11057 },
+    { "name": "Ziguinchor",   "aliases": ["ziguinchor"],                     "population": 617567,  "demographic_weight": 3.4, "poverty_rate": 48.3, "density": 84,   "area_km2": 7329 },
+    { "name": "Sédhiou",      "aliases": ["sedhiou", "sédhiou"],             "population": 589266,  "demographic_weight": 3.3, "poverty_rate": 64.4, "density": 80,   "area_km2": 7353 },
+    { "name": "Kédougou",     "aliases": ["kedougou", "kédougou"],           "population": 245147,  "demographic_weight": 1.4, "poverty_rate": 65.7, "density": 15,   "area_km2": 16904 }
   ]
 }

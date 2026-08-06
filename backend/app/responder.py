@@ -19,21 +19,32 @@ SUGGESTED_QUESTIONS = [
     "Quel est le taux de pauvreté à Kaolack comparé à Dakar ?",
     "Quelle est la région la plus pauvre du Sénégal ?",
     "Quelle est la population de Thiès ?",
-    "Quelles sont les régions les plus peuplées ?",
+    "Quelle région est la plus dense ?",
     "Quel est le taux de pauvreté au Sénégal ?",
     "Compare Ziguinchor et Kolda sur la pauvreté",
 ]
 
 CLARIFICATION_ANSWER = (
-    "Je peux répondre sur deux indicateurs pour l'instant : la population "
-    "(RGPH-5, 2023) et le taux de pauvreté (EHCVM 2021/2022), par région "
-    "du Sénégal. Essayez par exemple : « Quel est le taux de pauvreté à "
-    "Kaolack ? » ou « Quelle est la population de Thiès ? »"
+    "Je peux répondre sur trois indicateurs pour l'instant : la population "
+    "(RGPH-5, 2023), le taux de pauvreté (EHCVM 2021/2022) et la densité de "
+    "population (RGPH-5, 2023), par région du Sénégal. Essayez par exemple : "
+    "« Quel est le taux de pauvreté à Kaolack ? » ou « Quelle région est la "
+    "plus dense ? »"
 )
+
+QUALIFIERS = {
+    "poverty_rate": "la plus touchée par la pauvreté",
+    "population": "la plus peuplée",
+    "density": "la plus dense",
+}
+
+
+def _ordinal_fem(n: int) -> str:
+    return f"{n}ʳᵉ" if n == 1 else f"{n}ᵉ"
 
 
 def _fmt(value: float, indicator: str) -> str:
-    if indicator == "population":
+    if indicator in ("population", "density"):
         return f"{int(value):,}".replace(",", " ")
     return f"{value:.1f}".replace(".", ",")
 
@@ -87,6 +98,7 @@ def build_response(intent: Intent, regions_data: dict) -> AskResponse:
             chart=ChartSpec(type="bar", unit=unit, series=series, indicator=indicator),
             source=source,
             suggestions=SUGGESTED_QUESTIONS,
+            indicator=indicator,
         )
 
     # 2) Comparaison entre régions citées (ou une région citée comparée au national)
@@ -112,6 +124,7 @@ def build_response(intent: Intent, regions_data: dict) -> AskResponse:
             chart=ChartSpec(type="bar", unit=unit, series=series, indicator=indicator),
             source=source,
             suggestions=SUGGESTED_QUESTIONS,
+            indicator=indicator,
         )
 
     # 3) Une seule région citée, sans comparaison explicite
@@ -119,10 +132,10 @@ def build_response(intent: Intent, regions_data: dict) -> AskResponse:
         r = _region_by_name(regions_data, intent.regions[0])
         ranked = _all_sorted(regions_data, indicator, descending=True)
         rank = next(i for i, x in enumerate(ranked, start=1) if x["name"] == r["name"])
-        qualifier = "la plus touchée par la pauvreté" if indicator == "poverty_rate" else "la plus peuplée"
+        qualifier = QUALIFIERS[indicator]
         answer = (
             f"Selon {source.report}, {article} {label} à {r['name']} est de "
-            f"{_fmt(r[indicator], indicator)} {unit} — c'est la {rank}ᵉ région {qualifier} "
+            f"{_fmt(r[indicator], indicator)} {unit} — c'est la {_ordinal_fem(rank)} région {qualifier} "
             f"sur les 14 régions du Sénégal."
         )
         national = regions_data["national"][indicator]
@@ -135,6 +148,7 @@ def build_response(intent: Intent, regions_data: dict) -> AskResponse:
             chart=ChartSpec(type="bar", unit=unit, series=series, indicator=indicator),
             source=source,
             suggestions=SUGGESTED_QUESTIONS,
+            indicator=indicator,
         )
 
     # 4) Aucune région citée : réponse nationale + carte de toutes les régions
@@ -149,4 +163,5 @@ def build_response(intent: Intent, regions_data: dict) -> AskResponse:
         chart=ChartSpec(type="map", unit=unit, series=series, indicator=indicator),
         source=source,
         suggestions=SUGGESTED_QUESTIONS,
+        indicator=indicator,
     )

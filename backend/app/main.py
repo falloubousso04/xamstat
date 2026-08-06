@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from .nlu import RegionCatalog, interpret
 from .responder import SUGGESTED_QUESTIONS, build_response
 from .schemas import AskRequest, AskResponse
+from .sdmx import build_sdmx_message
 
 DATA_DIR = Path(__file__).parent / "data"
 STATIC_DIR = Path(__file__).parent / "static"
@@ -50,8 +51,15 @@ def suggestions():
 
 @app.post("/api/ask", response_model=AskResponse)
 def ask(payload: AskRequest):
-    intent = interpret(payload.question, CATALOG)
+    intent = interpret(payload.question, CATALOG, context_indicator=payload.context_indicator)
     return build_response(intent, REGIONS_DATA)
+
+
+@app.get("/api/sdmx/{indicator}")
+def sdmx(indicator: str):
+    if indicator not in REGIONS_DATA["meta"]:
+        raise HTTPException(status_code=404, detail=f"Indicateur inconnu : {indicator}")
+    return build_sdmx_message(indicator, REGIONS_DATA)
 
 
 # Sert le build React (npm run build -> ../frontend/dist copié ici) une fois déployé.
