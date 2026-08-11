@@ -24,6 +24,7 @@ export default function App() {
   const [lastQuestion, setLastQuestion] = useState<string>("");
   const [lastIndicator, setLastIndicator] = useState<Indicator | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [vizOpen, setVizOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const vizBodyRef = useRef<HTMLDivElement>(null);
 
@@ -43,8 +44,12 @@ export default function App() {
     setLoading(true);
     try {
       const res = await askQuestion(q, lastIndicator);
-      setMessages((prev) => [...prev, { role: "assistant", text: res.answer, source: res.source }]);
-      setChart(res.chart.type === "none" ? null : res.chart);
+      const resolvedChart = res.chart.type === "none" ? null : res.chart;
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: res.answer, source: res.source, chart: resolvedChart, question: q },
+      ]);
+      setChart(resolvedChart);
       setSource(res.source);
       setLastQuestion(q);
       if (res.indicator) setLastIndicator(res.indicator);
@@ -57,6 +62,13 @@ export default function App() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function showChartFor(message: Message) {
+    setChart(message.chart ?? null);
+    setSource(message.source ?? null);
+    setLastQuestion(message.question ?? "");
+    setVizOpen(true);
   }
 
   async function exportChart() {
@@ -85,7 +97,7 @@ export default function App() {
         <section className="chat-pane">
           <div className="messages" ref={scrollRef}>
             {messages.map((m, i) => (
-              <MessageBubble key={i} message={m} />
+              <MessageBubble key={i} message={m} onShowChart={showChartFor} />
             ))}
             {loading && <MessageBubble message={{ role: "assistant", text: "…" }} />}
           </div>
@@ -108,18 +120,23 @@ export default function App() {
             </button>
           </form>
         </section>
-        <section className="viz-pane">
+        <section className={`viz-pane ${vizOpen ? "open" : ""}`}>
           <div className="viz-header">
             <div className="viz-header-row">
               <div>
                 <div className="kicker">Visualisation</div>
                 <h2>{lastQuestion || "En attente d'une question"}</h2>
               </div>
-              {chart && (
-                <button className="export-btn" onClick={exportChart} disabled={exporting} title="Télécharger en PNG">
-                  {exporting ? "…" : "⭳ PNG"}
+              <div className="viz-header-actions">
+                {chart && (
+                  <button className="export-btn" onClick={exportChart} disabled={exporting} title="Télécharger en PNG">
+                    {exporting ? "…" : "⭳ PNG"}
+                  </button>
+                )}
+                <button className="viz-close-btn" onClick={() => setVizOpen(false)} title="Revenir à la conversation">
+                  ✕ Fermer
                 </button>
-              )}
+              </div>
             </div>
           </div>
           <div className="viz-body" ref={vizBodyRef}>
