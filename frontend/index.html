@@ -1,13 +1,61 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <title>XamStat — Données ANSD en conversation</title>
+    <style>
+      /* Écran de démarrage affiché immédiatement, avant même le chargement du bundle React.
+         Utile notamment lors d'un "cold start" de l'hébergement gratuit (Render), qui peut
+         prendre jusqu'à 30 secondes sur la toute première visite après une période d'inactivité.
+         Ce calque est en position fixe, indépendant de #root : quand React rend l'application,
+         il remplace le contenu de #root (donc ce calque) sans laisser de trace. */
+      .boot-screen {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 14px;
+        background: linear-gradient(155deg, #0b2545 0%, #13355e 60%, #0d2c52 100%);
+        color: #f4f2ea;
+        font-family: "Segoe UI", "Calibri", Arial, sans-serif;
+        text-align: center;
+        padding: 24px;
+        z-index: 9999;
+      }
+      .boot-screen .boot-title {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 28px;
+      }
+      .boot-screen .boot-tag {
+        font-size: 13px;
+        color: #cfd3e0;
+        max-width: 320px;
+      }
+      .boot-screen .boot-spinner {
+        width: 26px;
+        height: 26px;
+        border: 3px solid rgba(244, 242, 234, 0.25);
+        border-top-color: #c79a3d;
+        border-radius: 50%;
+        animation: boot-spin 0.8s linear infinite;
+      }
+      @keyframes boot-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="boot-screen">
+        <div class="boot-title">XamStat</div>
+        <div class="boot-spinner"></div>
+        <div class="boot-tag">Chargement du service — la première visite peut prendre jusqu'à 30 secondes.</div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
